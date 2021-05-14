@@ -5,6 +5,7 @@ import * as apexcharts from "./plugins/apexcharts";
 import router from "./router";
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import './registerServiceWorker'
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = true;
 
