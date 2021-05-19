@@ -89,7 +89,7 @@
             v-bind="attrs"
             @click="bar1 = false"
         >
-          Close
+         关 闭
         </v-btn>
       </template>
     </v-snackbar>

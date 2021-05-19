@@ -148,7 +148,7 @@
               v-bind="attrs"
               @click="show = false"
           >
-            Close
+            关 闭
           </v-btn>
         </template>
       </v-snackbar>
@@ -165,7 +165,7 @@
               v-bind="attrs"
               @click="showlog = false"
           >
-            Close
+            关 闭
           </v-btn>
         </template>
       </v-snackbar>
@@ -176,7 +176,7 @@
     <v-dialog v-model="changepass" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">Change Password</span>
+          <span class="headline">修改密码/span>
         </v-card-title>
         <v-card-text>
           <v-container>

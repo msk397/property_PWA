@@ -55,14 +55,14 @@
                 @click="close"
 
             >
-              Cancel
+              取 消
             </v-btn>
             <v-btn
                 color="blue darken-1"
                 text
                 @click="save"
             >
-              Save
+              报 修
             </v-btn>
           </v-card-actions>
         </v-card>

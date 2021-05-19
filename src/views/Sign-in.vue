@@ -71,13 +71,13 @@
                       </v-card-title>
                       <v-card-text>{{mess}}</v-card-text>
                       <v-card-actions>
-                        <v-spacer></v-spacer>
+                        <v-spacer/>
                         <v-btn
-                            color="green darken-1"
+                            color="error"
                             text
                             @click="show = false"
                         >
-                          了解
+                          了 解
                         </v-btn>
                       </v-card-actions>
                     </v-card>

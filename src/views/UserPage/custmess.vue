@@ -50,7 +50,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-spacer></v-spacer>
+                  <v-spacer/>
 
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
@@ -108,7 +108,7 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-spacer></v-spacer>
+                  <v-spacer/>
                     <v-col cols="12" sm="6" md="4">
                       <v-btn
                           v-if="editedIndex !== -1"
@@ -120,13 +120,11 @@
                   </v-row>
                 <small>带*为必填项</small>
               </v-container>
-
             </v-card-text>
-
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-spacer/>
+              <v-btn color="blue darken-1" text @click="close">关 闭</v-btn>
+              <v-btn color="blue darken-1" text @click="save">保 存</v-btn>
             </v-card-actions>
           </v-card>
 
@@ -136,10 +134,10 @@
             <v-card-title class="headline">警告</v-card-title>
             <v-card-text>确定要删除该信息吗?</v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
+              <v-spacer/>
+              <v-btn color="blue darken-1" text @click="closeDelete">取 消</v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">确 定</v-btn>
+              <v-spacer/>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -149,9 +147,9 @@
             <v-card-title class="headline">确认密码</v-card-title>
             <v-card-text>{{newPass}}</v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="setpass">OK</v-btn>
-              <v-spacer></v-spacer>
+              <v-spacer/>
+              <v-btn color="blue darken-1" text @click="setpass">确 认</v-btn>
+              <v-spacer/>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -183,7 +181,7 @@
             v-bind="attrs"
             @click="bar = false"
         >
-          Close
+          关 闭
         </v-btn>
       </template>
     </v-snackbar>
@@ -199,7 +197,7 @@
             v-bind="attrs"
             @click="resetPassConfirm"
         >
-          确定
+          确 定
         </v-btn>
       </template>
     </v-snackbar>

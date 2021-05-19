@@ -119,25 +119,25 @@
                           scrollable
                           :allowed-dates="allowedDates"
                       >
-                        <v-spacer></v-spacer>
+                        <v-spacer/>
                         <v-btn
                             text
                             color="primary"
                             @click="modal = false"
                         >
-                          Cancel
+                          关 闭
                         </v-btn>
                         <v-btn
                             text
                             color="primary"
                             @click="$refs.dialogtimer.save(editedItem.poster_date)"
                         >
-                          OK
+                          确 定
                         </v-btn>
                       </v-date-picker>
                     </v-menu>
                   </v-col>
-                  <v-spacer></v-spacer>
+                  <v-spacer/>
                     <v-col
                       cols="12"
                       sm="6"
@@ -175,14 +175,14 @@
                             color="primary"
                             @click="timeChoose = false"
                         >
-                          Cancel
+                          取 消
                         </v-btn>
                         <v-btn
                             text
                             color="primary"
                             @click="$refs.menu.save(editedItem.poster_time)"
                         >
-                          OK
+                          确 定
                         </v-btn>
                       </v-time-picker>
                     </v-menu>
@@ -227,19 +227,19 @@
                               color="primary"
                               @click="modal1 = false"
                           >
-                            Cancel
+                            关 闭
                           </v-btn>
                           <v-btn
                               text
                               color="primary"
                               @click="$refs.dialog_timer.save(editedItem.poster_enddate)"
                           >
-                            OK
+                            确 定
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-spacer></v-spacer>
+                    <v-spacer/>
                     <v-col
                         cols="12"
                         sm="6"
@@ -277,14 +277,14 @@
                               color="primary"
                               @click="timeChoose1 = false"
                           >
-                            Cancel
+                            关 闭
                           </v-btn>
                           <v-btn
                               text
                               color="primary"
                               @click="$refs.menu1.save(editedItem.poster_endtime)"
                           >
-                            OK
+                            确 定
                           </v-btn>
                         </v-time-picker>
                       </v-menu>
@@ -319,14 +319,14 @@
                   text
                   @click="close"
               >
-                Cancel
+                关 闭
               </v-btn>
               <v-btn
                   color="blue darken-1"
                   text
                   @click="save"
               >
-                Save
+                确 定
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -337,8 +337,8 @@
             <v-card-text>确定要删除该公告吗?</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+              <v-btn color="blue darken-1" text @click="closeDelete">取 消</v-btn>
+              <v-btn color="blue darken-1" text @click="deleteItemConfirm">确 定</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -371,7 +371,7 @@
             v-bind="attrs"
             @click="bar = false"
         >
-          Close
+          关 闭
         </v-btn>
       </template>
     </v-snackbar>
