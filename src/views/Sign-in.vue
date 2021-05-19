@@ -110,7 +110,26 @@ export default {
       mess:"",
     }
   },
+  created() {
+    this.pd()
+  },
   methods:{
+    pd(){
+      var pd = window.localStorage.getItem('login')
+      if(pd==='1'){
+        if(window.localStorage.getItem('identity')==='2'){
+          this.$router.push({ path:'/cust/dashboard',
+            query:{
+              name: window.localStorage.getItem('name'),
+            }});
+        }else{
+          this.$router.push({ path:'/user/dashboard',
+            query:{
+              name: window.localStorage.getItem('name'),
+            }});
+        }
+      }
+    },
     asd:function (){
       this.axios.post(this.url+'common/signin', JSON.stringify(this.signin)
       ).then(res => {//true
@@ -122,24 +141,26 @@ export default {
           if(res.data["mess"]==="admin")
           {
             if(this.signin.account==='root'){
-              window.sessionStorage.setItem('identity','0');
+              window.localStorage.setItem('identity','0');
             }
             else{
-              window.sessionStorage.setItem('identity','1');
+              window.localStorage.setItem('identity','1');
             }
-            window.sessionStorage.setItem('loginname', this.signin.account);
-            window.sessionStorage.setItem('name', res.data["name"]);
-            this.$router.push({ path:'/user/',
+            window.localStorage.setItem('loginname', this.signin.account);
+            window.localStorage.setItem('name', res.data["name"]);
+            window.localStorage.setItem('login','1')
+            this.$router.push({ path:'/user/dashboard',
               query:{
                 name: res.data["name"],
               }});
           }
           else if(res.data["mess"]==="cust")
           {
-            window.sessionStorage.setItem('identity','2');
-            window.sessionStorage.setItem('loginname', this.signin.account);
-            window.sessionStorage.setItem('name', res.data["name"]);
-            this.$router.push({ path:'/cust/',
+            window.localStorage.setItem('identity','2');
+            window.localStorage.setItem('loginname', this.signin.account);
+            window.localStorage.setItem('name', res.data["name"]);
+            window.localStorage.setItem('login','1')
+            this.$router.push({ path:'/cust/dashboard',
               query:{
                 name: res.data["name"],
               }});

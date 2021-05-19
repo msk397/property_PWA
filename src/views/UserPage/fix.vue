@@ -1,8 +1,10 @@
 <template>
   <div>
+    <v-card class="rounded-0">
   <v-data-table
       :headers="headers"
       :items="desserts"
+      :items-per-page="3"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :loading="load"
@@ -19,16 +21,13 @@
 
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>维修详情</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="查询相关信息"
             single-line
             hide-details
         ></v-text-field>
-        <v-spacer/>
         <v-dialog v-model="dialog" max-width="520px">
           <v-card>
             <v-card-title>
@@ -127,18 +126,13 @@
     </template>
     <!-- 这里是action里面的图标   -->
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
         <v-btn icon color="primary" class="elevation-5 ma-2" @click="editItem(item)">
-          <v-icon small v-bind="attrs" v-on="on" >mdi-pencil</v-icon>
+          <v-icon small>mdi-pencil</v-icon>
         </v-btn>
-      </template><span>修改信息</span>
-      </v-tooltip>
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
         <v-btn icon color="error" class="elevation-5 ma-1" @click="deleteItem(item)">
-          <v-icon small v-bind="attrs" v-on="on" >mdi-delete</v-icon>
+          <v-icon small  >mdi-delete</v-icon>
         </v-btn>
-      </template><span>删 除</span>
-      </v-tooltip>
     </template>
 
   </v-data-table>
@@ -159,6 +153,9 @@
         </v-btn>
       </template>
     </v-snackbar>
+      <v-card-title/>
+      <v-card-title/>
+    </v-card>
   </div>
 </template>
 
@@ -246,7 +243,7 @@ export default {
         this.editedItem.admin_name = ''
         this.editedItem.fix_endtime = ''
       }else{
-        this.editedItem.admin_name = window.sessionStorage.getItem('name')
+        this.editedItem.admin_name = window.localStorage.getItem('name')
         this.editedItem.fix_endtime = new Date().toJSON().substring(0, 10) + ' ' + new Date().toTimeString().substring(0,8)
       }
     },
@@ -294,7 +291,7 @@ export default {
       }
       else {
         var mess = this.editedItem
-        if (mess.admin_id === 'null') {mess.admin_login = window.sessionStorage.getItem('loginname')}
+        if (mess.admin_id === 'null') {mess.admin_login = window.localStorage.getItem('loginname')}
         delete mess.fix_status
         delete mess.admin_name
         delete mess.admin_id

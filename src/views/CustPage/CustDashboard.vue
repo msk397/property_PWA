@@ -3,128 +3,7 @@
     <v-sheet color="transparent">
       <v-row>
         <v-col cols="12" lg="6" xl="7">
-          <v-card class="pa-10 elevation-5" outlined>
-            <div class="d-flex align-center justify-space-between">
-              <div>
-                <div class="text-h6">
-                  待处理缴费信息
-                </div>
-              </div>
-            </div>
-            <template>
-              <v-data-table
-                  :headers="headers"
-                  :items="desserts"
-                  :items-per-page="5"
-                  class="elevation-24"
-                  :loading = "load"
-                  loading-text="加载中..."
-              >
-                <template v-slot:item.actions="{ item }">
-                  <v-btn color="primary" @click="paymoney(item)"  class="elevation-5">缴 费</v-btn>
-                </template>
-                <template v-slot:no-data>
-                  暂无待缴费信息
-                </template>
-              </v-data-table>
-            </template>
-          </v-card>
-          <v-col></v-col>
-
-          <v-card outlined class="pa-10 elevation-5">
-            <div class="d-flex align-center justify-space-between">
-              <div class="text-h6">
-                已提交的维修记录
-              </div>
-              <v-spacer/>
-              <v-dialog
-                  v-model="dialog"
-                  max-width="300px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                      color="primary"
-                      dark
-                      class="mb-2  elevation-5"
-                      v-bind="attrs"
-                      v-on="on"
-                  >
-                    报 修
-                  </v-btn>
-                </template>
-                <v-card ref="form">
-                  <v-card-title>
-                    <span class="headline">添加报修记录</span>
-                  </v-card-title>
-
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                          <v-textarea
-                              outlined
-                              auto-grow
-                              clearable
-                              clear-icon="mdi-close-circle"
-                              v-model="savelog"
-                              label="详 情*"
-                              counter="50"
-                              required
-                              :error-messages="logErrors"
-                              @input="$v.savelog.$touch()"
-                              @blur="$v.savelog.$touch()"
-                          ></v-textarea>
-                        <v-spacer/>
-                      </v-row>
-                      <small>带*为必填项</small>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer/>
-                    <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="close"
-
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="save"
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </div>
-
-            <template>
-              <v-data-table
-                  :headers="fixheader"
-                  :items="fix"
-                  :items-per-page="5"
-                  class="elevation-24"
-                  :loading = "load"
-                  loading-text="Loading... Please wait"
-              >
-                <template v-slot:item.fix_status="{item }">
-                  <v-chip :color="getColor(item.fix_status)" dark  class="elevation-5" outlined >{{ item.fix_status}}</v-chip>
-                </template>
-                <template v-slot:no-data>
-                  暂无报修记录
-                </template>
-              </v-data-table>
-
-            </template>
-
-          </v-card>
-        </v-col>
-
-        <v-col cols="12" lg="6" xl="5">
-          <v-card class="pa-10 fill-height elevation-5" outlined>
+          <v-card class="pa-4 fill-height elevation-5" outlined>
             <div class="d-flex align-center justify-space-between">
               <div class="text-h6">
                 公 告
@@ -161,8 +40,6 @@
                       </v-list-item-avatar>
                       <v-list-item-content>
                         <v-list-item-title>{{item.admin_name}}</v-list-item-title>
-                      </v-list-item-content>
-                      <v-list-item-content>
                         <v-list-item-title>发布时间：{{item.time}}</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
@@ -250,8 +127,8 @@ export default {
     fix:[],
     mess:"",
     poster:[],
-    login:window.sessionStorage.getItem('loginname'),
-    name:window.sessionStorage.getItem('name'),
+    login:window.localStorage.getItem('loginname'),
+    name:window.localStorage.getItem('name'),
     savelog:'',
   }),
   mounted() {
@@ -277,22 +154,9 @@ export default {
 
     initialize() {
       this.load = true
-      var mess = {"login":this.login}
       this.axios.get(this.url+'user/poster')
           .then(res => {
             this.poster=res.data
-          }, res => {
-            console.log(res);
-          })
-      this.axios.post(this.url+'cust/money',JSON.stringify(mess))
-          .then(res => {
-            this.desserts = res.data
-          }, res => {
-            console.log(res);
-          })
-      this.axios.post(this.url+'cust/fix',JSON.stringify(mess))
-          .then(res => {
-            this.fix = res.data
           }, res => {
             console.log(res);
           })

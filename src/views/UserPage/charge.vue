@@ -1,8 +1,10 @@
 <template>
   <div>
+    <v-card class="rounded-0">
   <v-data-table
       :headers="headers"
       :items="desserts"
+      :items-per-page="3"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :loading="load"
@@ -27,16 +29,10 @@
     </template>
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>缴费详情</v-toolbar-title>
-        <v-divider
-            class="mx-4"
-            inset
-            vertical
-        ></v-divider>
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="查询相关信息"
             single-line
             hide-details
         ></v-text-field>
@@ -193,21 +189,16 @@
     </template>
 <!-- 这里是action里面的图标   -->
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
         <v-btn icon color="primary" class="elevation-5 ma-2" @click="editItem(item)">
-          <v-icon small v-bind="attrs" v-on="on" >mdi-pencil</v-icon>
+          <v-icon small >mdi-pencil</v-icon>
         </v-btn>
-      </template><span>修改信息</span>
-      </v-tooltip>
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
         <v-btn icon color="error" class="elevation-5 ma-1" @click="deleteItem(item)">
-          <v-icon small v-bind="attrs" v-on="on" >mdi-delete</v-icon>
+          <v-icon small >mdi-delete</v-icon>
         </v-btn>
-      </template><span>删 除</span>
-      </v-tooltip>
+      <v-btn v-if="item.charge_status==='未缴费'" icon color="error" class="elevation-5 ma-1" @click="moneyalert(item)">
+        <v-icon small >{{mdiSend}}</v-icon>
+      </v-btn>
     </template>
-
-
   </v-data-table>
     <v-snackbar
         top
@@ -226,12 +217,16 @@
         </v-btn>
       </template>
     </v-snackbar>
+      <v-card-title/>
+      <v-card-title/>
+    </v-card>
   </div>
 </template>
 
 <script>
 import { validationMixin } from 'vuelidate'
 import { required,decimal,minValue } from 'vuelidate/lib/validators'
+import {mdiSend} from "@mdi/js";
 export default {
   mixins: [validationMixin],
   validations: {
@@ -241,10 +236,13 @@ export default {
     }
   },
   data: () => ({
+    mdiSend:mdiSend,
+    page:1,
+    pageCount:0,
     url: process.env.VUE_APP_API,
     load:true,
     mess:"",bar:false,
-    modal: false, search:"", sortBy:"charge_ddl", sortDesc:false, dialog: false, dialogDelete: false,
+    modal: false, search:"", sortBy:"charge_status", sortDesc:true, dialog: false, dialogDelete: false,
     headers: [
       {text: '业主姓名', align: 'start', value: 'cust_name',},
       { text: '地址', value: 'cust_addr' },
@@ -292,6 +290,24 @@ export default {
     this.initialize()
   },
   methods: {
+    moneyalert(item){
+      console.log(item)
+      item['name'] = item.cust_name
+      delete item.charge_status
+      delete item.charge_time
+      delete item.cust_addr
+      delete item.cust_name
+      delete item.status
+      console.log(item)
+      this.axios.post(this.url+'user/moneyalert', JSON.stringify(item))
+          .then(res => {
+            this.mess = res.data["mess"]
+            this.bar = true
+            this.initialize()
+          },res => {
+            console.log(res);
+          })
+    },
     allowedDates: val => Date.parse(val) > Date.now() - 8.64e7,
 
     getColor (calories) {

@@ -1,8 +1,11 @@
 <template>
   <div>
+    <v-card class="rounded-0">
+
     <v-data-table
         :headers="headers"
         :items="desserts"
+        :items-per-page="3"
         :loading="load"
         multi-sort
         :search="search"
@@ -16,11 +19,8 @@
       </template>
       <template v-slot:top>
         <v-toolbar flat>
-          <v-toolbar-title>员工管理</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+          <v-text-field v-model="search" append-icon="mdi-magnify" label="查询相关信息" single-line hide-details></v-text-field>
           <v-spacer/>
-
           <v-btn
               color="primary"
               class="mb-2 elevation-5"
@@ -116,24 +116,19 @@
       </template>
       <!-- 这里是action里面的图标   -->
       <template v-slot:item.actions="{ item }">
-        <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
           <v-btn icon color="primary" class="elevation-5 ma-2" @click="editItem(item)">
-            <v-icon small v-bind="attrs" v-on="on" >mdi-pencil</v-icon>
+            <v-icon small >mdi-pencil</v-icon>
           </v-btn>
-        </template><span>修改信息</span>
-        </v-tooltip>
-        <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
           <v-btn icon color="deep-orange" class="elevation-5 ma-1" @click="postItem(item)">
-            <v-icon small v-bind="attrs" v-on="on" >{{mdiSend}}</v-icon>
+            <v-icon small >{{mdiSend}}</v-icon>
           </v-btn>
-        </template><span>发送通知</span>
-        </v-tooltip>
-          <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
             <v-btn icon color="error" class="elevation-5 ma-2" @click="deleteItem(item)">
-              <v-icon small v-bind="attrs" v-on="on" >mdi-delete</v-icon>
+              <v-icon small  >mdi-delete</v-icon>
             </v-btn>
-          </template><span>删 除</span>
-          </v-tooltip>
+
       </template>
 
     </v-data-table>
@@ -250,6 +245,9 @@
         </v-btn>
       </template>
     </v-snackbar>
+      <v-card-title/>
+      <v-card-title/>
+    </v-card>
   </div>
 </template>
 
@@ -267,7 +265,7 @@ export default {
     resetpass:'pass',
     timeChoose:false,
     modal: false,
-    name: window.sessionStorage.getItem('name'),
+    name: window.localStorage.getItem('name'),
     search:"",
     dialog: false,
     dialoglog:false,

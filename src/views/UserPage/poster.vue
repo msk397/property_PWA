@@ -1,8 +1,10 @@
 <template>
   <div >
+    <v-card class="rounded-0">
   <v-data-table
       :headers="headers"
       :items="desserts"
+      :items-per-page="3"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :loading="load"
@@ -25,16 +27,10 @@
 
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>公告管理</v-toolbar-title>
-        <v-divider
-            class="mx-4"
-            inset
-            vertical
-        ></v-divider>
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Search"
+            label="查询相关信息"
             single-line
             hide-details
         ></v-text-field>
@@ -350,18 +346,15 @@
     </template>
     <!-- 这里是action里面的图标   -->
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
         <v-btn icon color="primary" class="elevation-5 ma-2" @click="editItem(item)">
-        <v-icon small v-bind="attrs" v-on="on" >mdi-pencil</v-icon>
+        <v-icon small  >mdi-pencil</v-icon>
         </v-btn>
-      </template><span>修改信息</span>
-      </v-tooltip>
-      <v-tooltip bottom :open-delay="300"><template v-slot:activator="{ on, attrs }">
+
         <v-btn icon color="error" class="elevation-5 ma-1" @click="deleteItem(item)">
-        <v-icon small v-bind="attrs" v-on="on" >mdi-delete</v-icon>
+        <v-icon small  >mdi-delete</v-icon>
         </v-btn>
-      </template><span>删 除</span>
-      </v-tooltip>
+
     </template>
 
   </v-data-table>
@@ -382,6 +375,9 @@
         </v-btn>
       </template>
     </v-snackbar>
+      <v-card-title/>
+      <v-card-title/>
+    </v-card>
   </div>
 </template>
 
@@ -516,14 +512,14 @@ export default {
   data: () => ({
     url: process.env.VUE_APP_API,
     load:true,
-    id:window.sessionStorage.getItem("identity"),
+    id:window.localStorage.getItem("identity"),
     mess:"",
     timeChoose1:false,
     modal1: false,
     timeChoose:false,
     modal: false,
-    name: window.sessionStorage.getItem('name'),
-    login: window.sessionStorage.getItem('loginname'),
+    name: window.localStorage.getItem('name'),
+    login: window.localStorage.getItem('loginname'),
     search:"",
     sortBy:"time",
     sortDesc:false,

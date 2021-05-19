@@ -1,105 +1,23 @@
 <template>
-  <div class="px-4">
+  <div class="px-1">
     <v-sheet color="transparent">
-      <v-row>
-        <v-col cols="12" md="6" lg="4" v-for="(item, i) in stats" :key="i">
-          <v-card class="py-6 px-10 elevation-5" outlined>
-            <div>
-              <div class="d-flex justify-space-between align-center">
-                <div>
-                  <div class="subtitle-2 text--secondary">
-                    {{ item.label }}
-                  </div>
-                  <div class="text-h6 mt-1">
-                    {{ item.title }}
-                  </div>
-                </div>
-
-                <div>
-                  <v-icon :color="item.color"  x-large v-if="i===0">{{ item.icon }}</v-icon>
-                  <v-progress-circular
-                      v-else
-                      :rotate="270"
-                      :size="50"
-                      :width="10"
-                      :value="item.number"
-                      :color="item.color"
-                  >
-                  </v-progress-circular>
-                </div>
-              </div>
-              <div class="subtitle-2 d-flex align-center mt-5">
-                <div>
-                  <span class="success--text">{{ item.number }}</span>
-                  <span class="ml-2 text--secondary">
-                    {{ item.desc }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-      </v-row>
-
-      <v-row>
         <v-col cols="12" lg="6" xl="7">
-          <v-card class="pa-10 elevation-5" outlined>
-            <div class="d-flex align-center justify-space-between">
-              <div>
-                <div class="text-h6">
-                  待处理缴费信息
-                </div>
-              </div>
-            </div>
-            <template>
-              <v-data-table
-                  :headers="headers"
-                  :items="desserts"
-                  :items-per-page="5"
-                  multi-sort
-                  class="elevation-24"
-                  :loading = "load"
-                  loading-text="Loading... Please wait"
-              >
-                <template v-slot:item.actions="{ item }">
-                  <v-btn color="error" class="elevation-5" @click="moneyalert(item)">提 醒</v-btn>
-                </template>
-                <template v-slot:no-data>
-                  暂无待处理缴费信息
-                </template>
-              </v-data-table>
-            </template>
-          </v-card>
-          <v-col></v-col>
-
-          <v-card outlined class="pa-10 elevation-5">
-            <div class="d-flex align-center justify-space-between">
-              <div class="text-h6">
-                待处理维修记录
-              </div>
-
-            </div>
-
-            <template>
-              <v-data-table
-                  :headers="fixheader"
-                  :items="fix"
-                  :items-per-page="5"
-                  multi-sort
-                  class="elevation-24"
-              >
-                <template v-slot:no-data>
-                  暂无待处理维修记录
-                </template>
-              </v-data-table>
-
-            </template>
-
+          <v-card class="elevation-5" outlined>
+              <v-list flat class="transparent">
+                  <v-list-item v-for="(item, i) in stats" :key="i" @click="drop(item)">
+                    <v-list-item-icon>
+                      <v-icon>{{item.icon}}</v-icon>
+                    </v-list-item-icon>
+                      <v-list-item-title v-text="item.label"></v-list-item-title>
+                      <v-list-item-title v-text="item.title" class="text-right"></v-list-item-title>
+                  </v-list-item>
+              </v-list>
           </v-card>
         </v-col>
 
+      <v-row>
         <v-col cols="12" lg="6" xl="5">
-          <v-card class="pa-10 fill-height elevation-5" outlined>
+          <v-card class="pa-4 fill-height elevation-5" outlined>
             <div class="d-flex align-center justify-space-between">
               <div class="text-h6">
                 公 告
@@ -111,7 +29,6 @@
             >
             <v-carousel
                 :cycle="hover? false : true"
-                height="400"
                 hide-delimiter-background
                 show-arrows-on-hover
                 v-if="poster.length!==0"
@@ -137,8 +54,6 @@
                               </v-list-item-avatar>
                               <v-list-item-content>
                                 <v-list-item-title>{{item.admin_name}}</v-list-item-title>
-                              </v-list-item-content>
-                              <v-list-item-content>
                                 <v-list-item-title>发布时间：{{item.time}}</v-list-item-title>
                               </v-list-item-content>
                             </v-list-item>
@@ -202,7 +117,7 @@
                     :headers="posterheader"
                     :items="unsign"
                     :items-per-page="5"
-                    class="elevation-24"
+                    class="elevation-5"
                     multi-sort
                 >
                   <template v-slot:no-data>暂无待签发的公告</template>
@@ -212,6 +127,7 @@
                 </v-data-table>
               </template>
             </v-col>
+            <v-card-title/>
           </v-card>
         </v-col>
       </v-row>
@@ -318,9 +234,10 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { required,} from 'vuelidate/lib/validators'
-import { mdiAccountGroup,mdiTwitter } from '@mdi/js'
+import { mdiAccountGroup,mdiTwitter,mdiHammerScrewdriver } from '@mdi/js'
 export default {
   data: () => ({
+    selectedItem: 1,
     url: process.env.VUE_APP_API,
     load:true,
     viewquary:'',
@@ -350,16 +267,16 @@ export default {
     chart: false,
     stats: [
       {label: "当前业主数", title: "", number: "", desc: "",
-        icon: mdiAccountGroup, color: "error",
+        icon: mdiAccountGroup, color: "error",to:"/user/people/custmess",
       },
       {label: "待处理缴费条目", title: "", number: "", desc: "",
-        color: "warning",
+        color: "warning",icon:"mdi-cash-100",to:"/user/other/charge",
       },
       {label: "待处理维修条目", title: "", number: "", desc: "",
-        color: "accent",
+        color: "accent",icon:mdiHammerScrewdriver,to:"/user/other/fix",
       },
     ],
-    id:window.sessionStorage.getItem("identity"),
+    id:window.localStorage.getItem("identity"),
     desserts: [],
     fix:[],
     mess:"",
@@ -387,6 +304,18 @@ export default {
   mounted() {this.chart = true;},
   created () {this.initialize()},
   methods: {
+    drop(item){
+      if(item.label==="当前业主数"){
+        window.sessionStorage.setItem('cust','tab-2');
+        this.$router.push({ path:'/user/people/custmess'});
+      }else if(item.label==="待处理缴费条目"){
+        window.sessionStorage.setItem('other','tab-1');
+        this.$router.push({ path:'/user/other/charge'});
+      }else{
+        window.sessionStorage.setItem('other','tab-2');
+        this.$router.push({ path:'/user/other/fix'});
+      }
+    },
     close () {
       this.dialog = false
       this.$nextTick(() => {
@@ -472,6 +401,7 @@ export default {
       this.load = false
     },
     moneyalert(item){
+      console.log(item)
       this.axios.post(this.url+'user/moneyalert', JSON.stringify(item))
           .then(res => {
             this.mess = res.data["mess"]

@@ -1,4 +1,21 @@
 module.exports = {
+  pwa: {
+    name: '毕设——物业管理系统手机端',
+    themeColor: '#0648b3',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'white',
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: './src/service-worker.js'
+    },
+    iconPaths: {
+      favicon32: 'img/icons/icon192~2.png',
+      favicon16: 'img/icons/icon192~1.png',
+      appleTouchIcon: 'img/icons/icon192~3.png',
+      maskIcon: 'img/icons/safari-pinned-tab.svg',
+      msTileImage: 'img/icons/msapplication-icon-144x144.png'
+    },
+  },
   /* 部署应用包的基本URL */
   /* baseUrl 从 Vue CLI 3.3 起已弃用 ，请使用publicPath */
   //  baseUrl: process.env.NODE_ENV === "production" ? "./" : "./",
