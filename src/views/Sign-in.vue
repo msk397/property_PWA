@@ -1,7 +1,7 @@
 <template>
   <v-img
       class="fill-height"
-      src="https://img-1304904413.cos.ap-hongkong.myqcloud.com/2021/05/12/13:58:58.jpg"
+      src="https://img-1304904413.cos.ap-hongkong.myqcloud.com/2021/05/19/21:24:25.JPG"
       :aspect-ratio="16 / 9"
       height="100vh"
       width="100vw"

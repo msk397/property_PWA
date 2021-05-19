@@ -176,7 +176,7 @@
     <v-dialog v-model="changepass" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">修改密码/span>
+          <span class="headline">修改密码</span>
         </v-card-title>
         <v-card-text>
           <v-container>
