@@ -1,6 +1,6 @@
 <template>
 
-  <v-card class="pa-4 elevation-5" outlined>
+  <v-card class="pa-4 elevation-5 rounded-0" outlined>
     <div class="d-flex align-center justify-space-between">
       <div>
         <div class="text-h6">

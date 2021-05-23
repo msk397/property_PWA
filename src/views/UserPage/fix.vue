@@ -20,6 +20,49 @@
     </template>
 
     <template v-slot:top>
+      <v-dialog class="rounded-0" v-model="dialogfixlog" max-width="520px">
+        <v-card  class="rounded-0">
+          <v-card-title>
+            <span class="headline">查看维修过程记录</span>
+          </v-card-title>
+
+          <v-card-text>
+            <v-timeline
+                align-top
+                dense
+            >
+              <v-timeline-item
+                  v-for="(item, i) in tl"
+                  :key="i"
+                  small
+              >
+                <div>
+                  <div class="font-weight-normal">
+                    <v-row>
+                      <strong>{{ item.title }}</strong>
+                    </v-row>
+                    @{{ item.time }}
+                  </div>
+                  <div>{{ item.log }}</div>
+                  <v-img
+                      :src="item.pic"
+                      contain
+                      max-height="200"
+                  >
+                  </v-img>
+                </div>
+              </v-timeline-item>
+            </v-timeline>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn color="blue darken-1" text @click="closefixlog">
+              关 闭
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-toolbar flat>
         <v-text-field
             v-model="search"
@@ -31,7 +74,7 @@
         <v-dialog v-model="dialog" max-width="520px">
           <v-card>
             <v-card-title>
-              <span class="headline">编辑缴费项目</span>
+              <span class="headline">编辑维修项目</span>
             </v-card-title>
 
             <v-card-text>
@@ -51,14 +94,6 @@
                         label="经手人"
                         disabled
                     ></v-text-field>
-                  </v-col>
-
-                  <v-col cols="12" sm="6" md="4">
-                    <v-switch
-                        v-model="editedItem.status"
-                        label="是否已维修"
-                        @change="switchfix"
-                    ></v-switch>
                   </v-col>
 
                   <v-col cols="8" sm="8" md="8">
@@ -126,13 +161,58 @@
     </template>
     <!-- 这里是action里面的图标   -->
     <template v-slot:item.actions="{ item }">
-
+      <v-menu
+          open-on-hover
+          offset-y
+          min-width="150"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn  v-bind="attrs" v-on="on" v-if="item.fix_status==='未处理'" icon color="error" class="elevation-5 ma-2">
+            <v-icon small >{{mdiHandPointingRight}}</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+              v-if="item.fix_sort==='燃气'"
+              v-for="(items, index) in gasFixer"
+              :key="index"
+              @click="postfix(items,item)"
+          >
+            <v-list-item-title>{{ items }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+              v-if="item.fix_sort==='水'"
+              v-for="(items, index) in waterFixer"
+              :key="index"
+              @click="postfix(items,item)"
+          >
+            <v-list-item-title>{{ items }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+              v-if="item.fix_sort==='电'"
+              v-for="(items, index) in elcFixer"
+              :key="index"
+              @click="postfix(items,item)"
+          >
+            <v-list-item-title>{{ items }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+              v-if="item.fix_sort==='网络'"
+              v-for="(items, index) in netFixer"
+              :key="index"
+              @click="postfix(items,item)"
+          >
+            <v-list-item-title>{{ items }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
         <v-btn icon color="primary" class="elevation-5 ma-2" @click="editItem(item)">
           <v-icon small>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn icon color="error" class="elevation-5 ma-1" @click="deleteItem(item)">
-          <v-icon small  >mdi-delete</v-icon>
+        <v-btn  v-if="item.fix_status!=='未处理'" icon color="primary" class="elevation-5 ma-2" @click="timelineItem(item)">
+          <v-icon small  >{{mdiTimelineTextOutline}}</v-icon>
         </v-btn>
+
     </template>
 
   </v-data-table>
@@ -162,6 +242,7 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { required,maxLength} from 'vuelidate/lib/validators'
+import { mdiHandPointingRight,mdiTimelineTextOutline } from '@mdi/js';
 export default {
   mixins: [validationMixin],
   validations: {
@@ -170,6 +251,10 @@ export default {
     }
   },
   data: () => ({
+    tl:[],
+    dialogfixlog:false,
+    mdiTimelineTextOutline:mdiTimelineTextOutline,
+    mdiHandPointingRight:mdiHandPointingRight,
     url: process.env.VUE_APP_API,
     load:true,
     mess:"",bar:false,
@@ -182,11 +267,13 @@ export default {
     headers: [
       { text: '业主姓名', align: 'start', value: 'cust_name',},
       { text: '地址', value: 'cust_addr' },
+      { text: '维修种类', value: 'fix_sort' },
        { text: '维修状态', value: 'fix_status' },
       { text: '生成时间', value: 'fix_startime' },
       { text: '完成时间', value: 'fix_endtime' },
       { text: '维修详情', value: 'fix_log' },
       { text: '处理人', value: 'admin_name' },
+      { text: '维修工人', value: 'fixer_name' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     desserts: [],
@@ -197,6 +284,7 @@ export default {
     defaultItem: {admin_login:'', cust_name: '', fix_endtime:'', fix_id:'', fix_log:'',
       fix_startime:'', fix_status:'', admin_id:'', admin_name:'', status:false,
     },
+    gasFixer: [],waterFixer:[],netFixer:[],elcFixer:[],
   }),
 
   computed: {
@@ -217,6 +305,42 @@ export default {
   created () {this.initialize()},
 
   methods: {
+    timelineItem(item){
+      this.dialogfixlog = true
+      var mess = {'id':item.fix_id}
+      this.axios.post(this.url+'userFix/queryFixlog',JSON.stringify(mess))
+          .then(res => {
+            this.tl=res.data;
+            this.loadin=!this.loadin;
+            this.dialogfixlog = true
+          },res => {
+            console.log(res);
+          })
+    },
+    closefixlog(){
+      this.dialogfixlog = false
+      this.tl=null
+    },
+    postfix(items,item){
+      var mess = item
+      mess.name = items
+      mess.admin_login = window.sessionStorage.getItem("loginname")
+      delete mess.admin_id
+      delete mess.admin_name
+      delete mess.fix_endtime
+      delete mess.fix_log
+      delete  mess.fix_sort
+      delete mess.fix_startime
+      delete  mess.fix_status
+      delete mess.fixer_name
+      delete mess.status
+      this.axios.post(this.url+'fixer/postfix',JSON.stringify(mess)).then(res=>{
+        console.log(res)
+        this.mess = res.data['mess']
+        this.bar = true
+        this.initialize()
+      })
+    },
     allowedDates: val => Date.parse(val) > Date.now() - 8.64e7,
 
     getColor (calories) {
@@ -231,6 +355,16 @@ export default {
       this.axios.get(this.url+'userFix/queryUserFix')
           .then(res => {
             this.desserts=res.data;
+            this.loadin=!this.loadin;
+          },res => {
+            console.log(res);
+          })
+      this.axios.get(this.url+'fixer/queryfixersort')
+          .then(res => {
+            this.gasFixer = res.data[0]
+            this.waterFixer=res.data[1]
+            this.netFixer=res.data[3]
+            this.elcFixer=res.data[2]
             this.loadin=!this.loadin;
           },res => {
             console.log(res);

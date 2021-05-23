@@ -291,7 +291,6 @@ export default {
   },
   methods: {
     moneyalert(item){
-      console.log(item)
       item['name'] = item.cust_name
       delete item.charge_status
       delete item.charge_time

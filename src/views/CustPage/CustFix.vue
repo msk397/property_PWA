@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="pa-4 elevation-5">
+  <v-card outlined class="pa-4 elevation-5 rounded-0">
     <div class="d-flex align-center justify-space-between">
       <div class="text-h6">
         已提交的维修记录
@@ -27,6 +27,13 @@
 
           <v-card-text>
             <v-container>
+              <v-col>
+                <v-select
+                    :items="memo"
+                    label="类型"
+                    v-model="memo_sort"
+                ></v-select>
+              </v-col>
               <v-row>
                 <v-textarea
                     outlined
@@ -84,6 +91,56 @@
         <template v-slot:no-data>
           暂无报修记录
         </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn  v-if="item.fix_status!=='未处理'" icon color="primary" class="elevation-5 ma-2" @click="timelineItem(item)">
+            <v-icon small  >{{mdiTimelineTextOutline}}</v-icon>
+          </v-btn>
+        </template>
+        <template v-slot:top>
+          <v-dialog class="rounded-0" v-model="dialogfixlog" max-width="520px">
+            <v-card  class="rounded-0">
+              <v-card-title>
+                <span class="headline">查看维修过程记录</span>
+              </v-card-title>
+
+              <v-card-text>
+                <v-timeline
+                    align-top
+                    dense
+                >
+                  <v-timeline-item
+                      v-for="(item, i) in tl"
+                      :key="i"
+                      small
+                  >
+                    <div>
+                      <div class="font-weight-normal">
+                        <v-row>
+                          <strong>{{ item.title }}</strong>
+                        </v-row>
+                        @{{ item.time }}
+                      </div>
+                      <div>{{ item.log }}</div>
+                      <v-img
+                          :src="item.pic"
+                          contain
+                          max-height="200"
+                      >
+                      </v-img>
+                    </div>
+                  </v-timeline-item>
+                </v-timeline>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer/>
+                <v-btn color="blue darken-1" text @click="closefixlog">
+                  关 闭
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
       </v-data-table>
 
     </template>
@@ -94,12 +151,17 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import {maxLength, required,} from 'vuelidate/lib/validators'
+import {mdiTimelineTextOutline} from '@mdi/js'
 export default {
   mixins: [validationMixin],
   validations: {
     savelog:{required,maxLength:maxLength(50)},
   },
   data: () => ({
+    dialogfixlog:false,
+    mdiTimelineTextOutline:mdiTimelineTextOutline,
+    memo_sort:'电',
+    memo:['电','水','燃气','网络'],
     url: process.env.VUE_APP_API,
     load:true,
     bar1:false,dialog:false,
@@ -108,7 +170,9 @@ export default {
       { text: '报修时间', value: 'fix_startime'},
       { text: '维修时间', value: 'fix_endtime'},
       { text: '维修状态', value: 'fix_status'},
+      { text: 'Actions', value: 'actions', sortable: false },
     ],
+    tl:[],
     chart: false,
     fix:[],
     mess:"",
@@ -132,6 +196,22 @@ export default {
     },
   },
   methods: {
+    timelineItem(item){
+      this.dialogfixlog = true
+      var mess = {'id':item.fix_id}
+      this.axios.post(this.url+'userFix/queryFixlog',JSON.stringify(mess))
+          .then(res => {
+            this.tl=res.data;
+            this.loadin=!this.loadin;
+            this.dialogfixlog = true
+          },res => {
+            console.log(res);
+          })
+    },
+    closefixlog(){
+      this.dialogfixlog = false
+      this.tl=null
+    },
     getColor (calories) {
       if (calories === "已处理") return 'primary'
       else return 'red'
@@ -157,7 +237,8 @@ export default {
         this.$v.savelog.$touch()
       }
       else{
-        var mess = {"log":this.savelog,"login":this.name,"time":new Date().toJSON().substring(0, 10) + ' ' + new Date().toTimeString().substring(0,8)}
+        var mess = {"log":this.savelog,"login":this.name,"fix_sort":this.memo_sort,
+          "time":new Date().toJSON().substring(0, 10) + ' ' + new Date().toTimeString().substring(0,8)}
         this.axios.post(this.url+'cust/AddFix', JSON.stringify(mess))
         this.mess = "报修成功"
         this.bar1 = true

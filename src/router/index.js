@@ -17,13 +17,13 @@ const routes = [
     component: () => import("../views/UserPage/user"),
     children: [
       {
-        path: "/user/dashboard",
-        name: "user-dashboard",
+        path: "/user/adminlist",
+        name: "user-adminlist",
         meta:{
           title: '物业管理系统-管理员首页'
         },
         component: () =>
-            import("../views/UserPage/UserDashboard"),
+            import("../views/UserPage/adminlist"),
       },
       {
         path: "/user/people",
@@ -134,7 +134,8 @@ const routes = [
             import("../views/UserPage/custmess"),
       },
     ]
-  },{
+  },
+  {
     path: "/cust",
     component: () => import("../views/CustPage/Cust"),
     children: [
@@ -170,6 +171,24 @@ const routes = [
       },
     ]
   },
+
+  {
+    path: "/fixer",
+    component: () => import("../views/fixer/fixer"),
+    children: [
+      {
+        path: "/fixer/dashboard",
+        name: "fixer-dashboard",
+        meta:{
+          //
+          title: '物业管理系统-维修人员首页'
+        },
+        component: () =>
+            import("../views/fixer/FixerDashboard"),
+      },
+    ]
+  },
+
 
 ];
 

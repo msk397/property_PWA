@@ -1,11 +1,6 @@
 <template>
   <div>
     <v-card class="overflow-hidden mx-auto rounded-0">
-      <v-bottom-navigation  class="rounded-0" color="primary" flat absolute shift grow transparent>
-        <v-btn to="/user/adminlist"><span>首页</span><v-icon>mdi-home</v-icon></v-btn>
-        <v-btn  to="/user/people"><span>人员管理</span><v-icon>{{mdiAccountTie}}</v-icon></v-btn>
-        <v-btn  to="/user/other"><span>其他事务</span><v-icon>{{mdiHammerScrewdriver}}</v-icon></v-btn>
-      </v-bottom-navigation>
       <!--TODO 获取当前设备的高度替换812        -->
       <v-responsive id="hide-on-scroll-example" class="overflow-y-auto" :max-height=this.screenHeight  :min-height=this.screenHeight>
         <v-app-bar app flat color="white">
@@ -57,7 +52,7 @@
               offset-x="15"
               offset-y="15"
           >
-            <v-btn icon v-bind="attrs" v-on="on" v-if="id==='1'">
+            <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>mdi-bell-outline</v-icon>
             </v-btn>
           </v-badge>
@@ -83,27 +78,15 @@
             </v-card-title>
             <v-card-text>
               <v-container>
-                <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                        v-model="mess.real"
+                        v-model="mess.name"
                         label="姓名*"
                         required
                       :disabled="read"
-                        :error-messages="realErrors"
-                        @input="$v.mess.real.$touch()"
-                        @blur="$v.mess.real.$touch()"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="4" md="4">
-                    <v-text-field
-                        label="住址*"
-                        v-model="mess.addr"
-                        required
-                        :disabled="read"
-                        :error-messages="addrErrors"
-                        @input="$v.mess.addr.$touch()"
-                        @blur="$v.mess.addr.$touch()"
+                        :error-messages="nameErrors"
+                        @input="$v.mess.name.$touch()"
+                        @blur="$v.mess.name.$touch()"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -118,7 +101,6 @@
                         @blur="$v.mess.phone.$touch()"
                     ></v-text-field>
                   </v-col>
-                </v-row>
               </v-container>
               <small>带*为必填项</small>
             </v-card-text>
@@ -240,13 +222,11 @@ import {
   mdiHammerScrewdriver,
   mdiAccountTie,
   mdiEmailMarkAsUnread,
-  mdiEmailOpen,
-  mdiHammer
+  mdiEmailOpen
 } from '@mdi/js'
 export default {
   data (){
     return{
-      mdiHammer:mdiHammer,
       screenHeight: document.body.clientHeight, // 屏幕尺寸
       mdiAccountTie:mdiAccountTie,
       mdiAccountCircle:mdiAccountCircle,
@@ -262,7 +242,7 @@ export default {
       changePassMess:null,changepass:false,show3:false,show4:false,
       name: window.localStorage.getItem('name'),
       drawerDisplay: null,
-      mess:{real:"", phone:"", addr:"", passwd:"",login:window.localStorage.getItem('loginname')},
+      mess:{name:"", phone:"", addr:"", passwd:"",login:window.localStorage.getItem('loginname')},
       pass:{oldPass:"",confirmPass:"",newPass:"",login:window.localStorage.getItem('loginname')},
     }
   },
@@ -271,8 +251,7 @@ export default {
   validations: {
     mess: {
       phone:{required,minLength:minLength(11),maxLength:maxLength(11),numeric},
-      addr:{required,},
-      real:{required,},
+      name:{required,},
     },
     pass:{
       oldPass: {required,minLength:minLength(8)},
@@ -290,16 +269,10 @@ export default {
       !this.$v.mess.phone.required && errors.push('手机号不可为空')
       return errors
     },
-    addrErrors(){
+    nameErrors(){
       const errors = []
-      if (!this.$v.mess.addr.$dirty) return errors
-      !this.$v.mess.addr.required && errors.push('地址不可为空')
-      return errors
-    },
-    realErrors(){
-      const errors = []
-      if (!this.$v.mess.real.$dirty) return errors
-      !this.$v.mess.real.required && errors.push('姓名不可为空')
+      if (!this.$v.mess.name.$dirty) return errors
+      !this.$v.mess.name.required && errors.push('姓名不可为空')
       return errors
     },
     opErrors(){
@@ -352,14 +325,16 @@ export default {
       this.$router.push({ path:'/',});
     },
     query:function (){
-      this.axios.post(this.url+'user/queryusermess', JSON.stringify({"name":window.localStorage.getItem('loginname')}),
+      this.axios.post(this.url+'fixer/queryfixermess', JSON.stringify({"name":window.localStorage.getItem('loginname')}),
       ).then(res => {//true
-        this.mess.real=res.data["real"];this.mess.phone=res.data["phone"];this.mess.addr=res.data["addr"];this.mess.passwd=res.data["passwd"];
+        this.mess.name=res.data["name"];
+        this.mess.phone=res.data["phone"];
+        this.mess.passwd=res.data["passwd"];
       }, res => {// 错误回调
         /*TODO 这里写啥？*/
         console.log(res);
       })
-      this.axios.post(this.url+'user/querylog', JSON.stringify({"name":window.localStorage.getItem('loginname')}),
+      this.axios.post(this.url+'fixer/querylog', JSON.stringify({"name":window.localStorage.getItem('name')}),
       ).then(res => {//true
         this.log = res.data[0]
         this.logcount = res.data[1]+res.data[2]
@@ -380,7 +355,7 @@ export default {
             this.$v.mess.$touch()
           }
           else {
-            this.axios.post(this.url+'user/saveusermess', JSON.stringify(this.mess)).then(res => {//true
+            this.axios.post(this.url+'fixer/savefixermess', JSON.stringify(this.mess)).then(res => {//true
               this.savemess = res.data["mess"];
               this.show = true;
               this.query();

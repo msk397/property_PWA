@@ -31,6 +31,10 @@
                           label="业主"
                           value="houser"
                       ></v-radio>
+                      <v-radio
+                          label="维修人员"
+                          value="fixer"
+                      ></v-radio>
                     </v-radio-group>
                     <v-text-field
                         label="输入您的账号"
@@ -60,8 +64,7 @@
                     <div class="mt-6">
                       <v-btn block class="text-capitalize" large color="primary" @click="asd"
                       >登 录
-                      </v-btn
-                      >
+                      </v-btn>
                     </div>
 
                     <v-dialog  max-width="200px" v-model="show" >
@@ -149,7 +152,7 @@ export default {
             window.localStorage.setItem('loginname', this.signin.account);
             window.localStorage.setItem('name', res.data["name"]);
             window.localStorage.setItem('login','1')
-            this.$router.push({ path:'/user/dashboard',
+            this.$router.push({ path:'/user/adminlist',
               query:{
                 name: res.data["name"],
               }});
@@ -161,6 +164,17 @@ export default {
             window.localStorage.setItem('name', res.data["name"]);
             window.localStorage.setItem('login','1')
             this.$router.push({ path:'/cust/dashboard',
+              query:{
+                name: res.data["name"],
+              }});
+          }
+          else if(res.data["mess"]==="fixer")
+          {
+            window.localStorage.setItem('identity','3');
+            window.localStorage.setItem('loginname', this.signin.account);
+            window.localStorage.setItem('name', res.data["name"]);
+            window.localStorage.setItem('login','1')
+            this.$router.push({ path:'/fixer/dashboard',
               query:{
                 name: res.data["name"],
               }});
