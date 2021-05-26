@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-card class="overflow-hidden mx-auto rounded-0">
-      <v-bottom-navigation  class="rounded-0" color="primary" flat absolute shift grow transparent>
-        <v-btn to="/cust/dashboard"><span>首页</span><v-icon>mdi-home</v-icon></v-btn>
-        <v-btn to="/cust/charge"><span>缴费</span><v-icon>mdi-cash-100</v-icon></v-btn>
-        <v-btn to="/cust/fix"><span>报修</span><v-icon>{{mdiHammerScrewdriver}}</v-icon></v-btn>
+      <v-bottom-navigation  height="70" class="rounded-0" color="primary" flat absolute  grow transparent>
+        <v-btn to="/cust/dashboard"><v-icon>mdi-home</v-icon></v-btn>
+        <v-btn to="/cust/charge"><v-icon>mdi-cash-100</v-icon></v-btn>
+        <v-btn to="/cust/fix"><v-icon>{{mdiHammerScrewdriver}}</v-icon></v-btn>
       </v-bottom-navigation>
       <!--TODO 获取当前设备的高度替换812        -->
       <v-responsive id="hide-on-scroll-example" class="overflow-y-auto" :max-height=this.screenHeight  :min-height=this.screenHeight>
@@ -135,10 +135,17 @@
           </template>
           <v-list  rounded >
 
-            <v-list-item v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
+            <v-list-item v-if="logcount===0">
+              <v-spacer/>
               <v-list-item-content>
-              <v-list-item-title >{{ item.log_title }}</v-list-item-title>
-              <v-list-item-subtitle>{{item.log_time}}</v-list-item-subtitle>
+                <v-list-item-title >暂无通知</v-list-item-title>
+              </v-list-item-content>
+              <v-spacer/>
+            </v-list-item>
+            <v-list-item v-else v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
+              <v-list-item-content>
+                <v-list-item-title >{{ item.log_title }}</v-list-item-title>
+                <v-list-item-subtitle>{{item.log_time}}</v-list-item-subtitle>
               </v-list-item-content>
               <v-spacer/>
               <v-icon v-if="item.log_status===0">{{unreadmailicon}}</v-icon>

@@ -1,11 +1,12 @@
 <template>
   <div>
     <v-card class="overflow-hidden mx-auto rounded-0">
-      <v-bottom-navigation  class="rounded-0" color="primary" flat absolute shift grow transparent>
-        <v-btn to="/user/adminlist"><span>首页</span><v-icon>mdi-home</v-icon></v-btn>
-        <v-btn  to="/user/people"><span>人员管理</span><v-icon>{{mdiAccountTie}}</v-icon></v-btn>
-        <v-btn  to="/user/other"><span>其他事务</span><v-icon>{{mdiHammerScrewdriver}}</v-icon></v-btn>
+      <v-bottom-navigation  height="70" class="rounded-0" color="primary" flat absolute   grow transparent >
+        <v-btn to="/user/adminlist"><v-icon>mdi-home</v-icon></v-btn>
+        <v-btn  to="/user/people"><v-icon>{{mdiAccountTie}}</v-icon></v-btn>
+        <v-btn  to="/user/other"><v-icon>{{mdiHammerScrewdriver}}</v-icon></v-btn>
       </v-bottom-navigation>
+
       <!--TODO 获取当前设备的高度替换812        -->
       <v-responsive id="hide-on-scroll-example" class="overflow-y-auto" :max-height=this.screenHeight  :min-height=this.screenHeight>
         <v-app-bar app flat color="white">
@@ -63,14 +64,21 @@
           </v-badge>
         </template>
         <v-list  rounded >
-          <v-list-item v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
+          <v-list-item v-if="logcount===0">
+            <v-spacer/>
+            <v-list-item-content>
+              <v-list-item-title >暂无通知</v-list-item-title>
+            </v-list-item-content>
+            <v-spacer/>
+          </v-list-item>
+          <v-list-item v-else v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
             <v-list-item-content>
               <v-list-item-title >{{ item.log_title }}</v-list-item-title>
               <v-list-item-subtitle>{{item.log_time}}</v-list-item-subtitle>
             </v-list-item-content>
             <v-spacer/>
             <v-icon v-if="item.log_status===0">{{unreadmailicon}}</v-icon>
-            <v-icon v-if="item.log_status===1">{{readmailicon}}</v-icon>
+            <v-icon v-else>{{readmailicon}}</v-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -169,7 +177,7 @@
     </v-app-bar>
     <v-main><router-view /></v-main>
       </v-responsive>
-    <v-dialog v-model="changepass" persistent max-width="600px">
+      <v-dialog v-model="changepass" persistent max-width="600px">
       <v-card>
         <v-card-title>
           <span class="headline">修改密码</span>
@@ -228,7 +236,9 @@
       </v-card>
     </v-dialog>
     </v-card>
+
   </div>
+
 </template>
 
 <script>

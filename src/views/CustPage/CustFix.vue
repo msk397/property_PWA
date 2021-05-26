@@ -1,82 +1,5 @@
 <template>
-  <v-card outlined class="pa-4 elevation-5 rounded-0">
-    <div class="d-flex align-center justify-space-between">
-      <div class="text-h6">
-        已提交的维修记录
-      </div>
-      <v-spacer/>
-      <v-dialog
-          v-model="dialog"
-          max-width="300px"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-              color="primary"
-              dark
-              class="mb-2  elevation-5"
-              v-bind="attrs"
-              v-on="on"
-          >
-            报 修
-          </v-btn>
-        </template>
-        <v-card ref="form">
-          <v-card-title>
-            <span class="headline">添加报修记录</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container>
-              <v-col>
-                <v-select
-                    :items="memo"
-                    label="类型"
-                    v-model="memo_sort"
-                ></v-select>
-              </v-col>
-              <v-row>
-                <v-textarea
-                    outlined
-                    auto-grow
-                    clearable
-                    clear-icon="mdi-close-circle"
-                    v-model="savelog"
-                    label="详 情*"
-                    counter="50"
-                    required
-                    :error-messages="logErrors"
-                    @input="$v.savelog.$touch()"
-                    @blur="$v.savelog.$touch()"
-                ></v-textarea>
-                <v-spacer/>
-              </v-row>
-              <small>带*为必填项</small>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer/>
-            <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-
-            >
-              取 消
-            </v-btn>
-            <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-            >
-              报 修
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </div>
-
-    <template>
+  <div><v-card class="rounded-0">
       <v-data-table
           :headers="fixheader"
           :items="fix"
@@ -97,6 +20,80 @@
           </v-btn>
         </template>
         <template v-slot:top>
+            <v-toolbar flat>
+              <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  label="查询相关信息"
+                  single-line
+                  hide-details
+              ></v-text-field>
+              <v-spacer/>
+              <v-btn
+                  color="primary"
+                  class="mb-2 elevation-5"
+                  @click="dialog = true"
+              >
+                报修
+              </v-btn>
+            </v-toolbar>
+          <v-dialog
+              v-model="dialog"
+              max-width="300px"
+          >
+            <v-card ref="form">
+              <v-card-title>
+                <span class="headline">添加报修记录</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-col>
+                    <v-select
+                        :items="memo"
+                        label="类型"
+                        v-model="memo_sort"
+                    ></v-select>
+                  </v-col>
+                  <v-row>
+                    <v-textarea
+                        outlined
+                        auto-grow
+                        clearable
+                        clear-icon="mdi-close-circle"
+                        v-model="savelog"
+                        label="详 情*"
+                        counter="50"
+                        required
+                        :error-messages="logErrors"
+                        @input="$v.savelog.$touch()"
+                        @blur="$v.savelog.$touch()"
+                    ></v-textarea>
+                    <v-spacer/>
+                  </v-row>
+                  <small>带*为必填项</small>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer/>
+                <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="close"
+
+                >
+                  取 消
+                </v-btn>
+                <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="save"
+                >
+                  报 修
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-dialog class="rounded-0" v-model="dialogfixlog" max-width="520px">
             <v-card  class="rounded-0">
               <v-card-title>
@@ -107,6 +104,7 @@
                 <v-timeline
                     align-top
                     dense
+                    v-if="queryend === true"
                 >
                   <v-timeline-item
                       v-for="(item, i) in tl"
@@ -130,6 +128,11 @@
                     </div>
                   </v-timeline-item>
                 </v-timeline>
+                <v-progress-circular
+                    indeterminate
+                    color="primary"
+                    v-else
+                ></v-progress-circular>
               </v-card-text>
 
               <v-card-actions>
@@ -142,10 +145,10 @@
           </v-dialog>
         </template>
       </v-data-table>
-
-    </template>
-
-  </v-card>
+    <v-card-title/>
+    <v-card-title/>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -158,6 +161,8 @@ export default {
     savelog:{required,maxLength:maxLength(50)},
   },
   data: () => ({
+    queryend:false,
+    search:"",
     dialogfixlog:false,
     mdiTimelineTextOutline:mdiTimelineTextOutline,
     memo_sort:'电',
@@ -203,7 +208,7 @@ export default {
           .then(res => {
             this.tl=res.data;
             this.loadin=!this.loadin;
-            this.dialogfixlog = true
+            this.queryend = true
           },res => {
             console.log(res);
           })

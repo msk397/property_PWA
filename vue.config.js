@@ -3,7 +3,6 @@ module.exports = {
     name: '毕设——物业管理系统手机端',
     themeColor: '#0648b3',
     appleMobileWebAppCapable: 'yes',
-    appleMobileWebAppStatusBarStyle: '#707695',
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       swSrc: './src/service-worker.js'

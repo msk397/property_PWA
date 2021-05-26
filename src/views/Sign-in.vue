@@ -125,8 +125,13 @@ export default {
             query:{
               name: window.localStorage.getItem('name'),
             }});
+        }else if(window.localStorage.getItem('identity')==='3'){
+          this.$router.push({ path:'/fixer/dashboard',
+            query:{
+              name: window.localStorage.getItem('name'),
+            }});
         }else{
-          this.$router.push({ path:'/user/dashboard',
+          this.$router.push({ path:'/user/adminlist',
             query:{
               name: window.localStorage.getItem('name'),
             }});

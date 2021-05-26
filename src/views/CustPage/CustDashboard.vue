@@ -3,7 +3,6 @@
     <v-sheet color="transparent">
       <v-row>
         <v-col cols="12" lg="6" xl="7">
-          <v-card class="pa-4 fill-height elevation-5" outlined>
             <div class="d-flex align-center justify-space-between">
               <div class="text-h6">
                 公 告
@@ -72,7 +71,6 @@
               </v-carousel-item>
             </v-carousel>
             </v-hover>
-          </v-card>
         </v-col>
       </v-row>
     </v-sheet>

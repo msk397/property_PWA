@@ -1,19 +1,9 @@
 <template>
-
-  <v-card class="pa-4 elevation-5 rounded-0" outlined>
-    <div class="d-flex align-center justify-space-between">
-      <div>
-        <div class="text-h6">
-          待处理缴费信息
-        </div>
-      </div>
-    </div>
-    <template>
+  <div><v-card class="rounded-0">
       <v-data-table
           :headers="headers"
           :items="desserts"
           :items-per-page="5"
-          class="elevation-5"
           :loading = "load"
           loading-text="加载中..."
       >
@@ -23,9 +13,29 @@
         <template v-slot:no-data>
           暂无待缴费信息
         </template>
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>缴费详情</v-toolbar-title>
+            <v-divider
+                class="mx-4"
+                inset
+                vertical
+            ></v-divider>
+            <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+            ></v-text-field>
+            <v-spacer/>
+          </v-toolbar>
+        </template>
       </v-data-table>
-    </template>
-  </v-card>
+    <v-card-title/>
+    <v-card-title/>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -37,6 +47,7 @@ export default {
     savelog:{required,maxLength:maxLength(50)},
   },
   data: () => ({
+    search:"",
     url: process.env.VUE_APP_API,
     load:true,
     bar1:false,dialog:false,

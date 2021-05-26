@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isRouterAlive">
     <v-card class="overflow-hidden mx-auto rounded-0">
       <!--TODO 获取当前设备的高度替换812        -->
       <v-responsive id="hide-on-scroll-example" class="overflow-y-auto" :max-height=this.screenHeight  :min-height=this.screenHeight>
@@ -36,6 +36,9 @@
         </v-card>
       </v-menu>
       <v-spacer />
+          <v-btn icon @click="refresh">
+            <v-icon>{{mdiRefresh}}</v-icon>
+          </v-btn>
       <v-menu
           open-on-hover
           offset-y
@@ -58,14 +61,21 @@
           </v-badge>
         </template>
         <v-list  rounded >
-          <v-list-item v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
+          <v-list-item v-if="logcount===0">
+            <v-spacer/>
+            <v-list-item-content>
+              <v-list-item-title >暂无通知</v-list-item-title>
+            </v-list-item-content>
+            <v-spacer/>
+          </v-list-item>
+          <v-list-item v-else v-for="item in log" :key="item.log_id" @click="unreadmail(item)" two-line>
             <v-list-item-content>
               <v-list-item-title >{{ item.log_title }}</v-list-item-title>
               <v-list-item-subtitle>{{item.log_time}}</v-list-item-subtitle>
             </v-list-item-content>
             <v-spacer/>
             <v-icon v-if="item.log_status===0">{{unreadmailicon}}</v-icon>
-            <v-icon v-if="item.log_status===1">{{readmailicon}}</v-icon>
+            <v-icon v-else>{{readmailicon}}</v-icon>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -149,7 +159,7 @@
       </v-snackbar>
 <!--  修改密码框    -->
     </v-app-bar>
-    <v-main><router-view /></v-main>
+    <v-main><router-view v-if="isRouterAlive"/></v-main>
       </v-responsive>
     <v-dialog v-model="changepass" persistent max-width="600px">
       <v-card>
@@ -222,11 +232,13 @@ import {
   mdiHammerScrewdriver,
   mdiAccountTie,
   mdiEmailMarkAsUnread,
-  mdiEmailOpen
+  mdiEmailOpen,mdiRefresh
 } from '@mdi/js'
 export default {
   data (){
     return{
+      isRouterAlive:true,
+      mdiRefresh:mdiRefresh,
       screenHeight: document.body.clientHeight, // 屏幕尺寸
       mdiAccountTie:mdiAccountTie,
       mdiAccountCircle:mdiAccountCircle,
@@ -304,6 +316,13 @@ export default {
   },
 
   methods:{
+    refresh() {
+      this.query()
+      this.isRouterAlive = false
+      this.$nextTick(function () {
+        this.isRouterAlive = true
+      })
+    },
     unreadmail(itemm){
       if(itemm.log_status===0){
         var mess = {"id":itemm.log_id}
