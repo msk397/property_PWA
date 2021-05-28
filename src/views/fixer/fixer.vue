@@ -52,8 +52,8 @@
               color="error"
               :value="logfail"
               :content="logfail"
-              offset-x="15"
-              offset-y="15"
+              offset-x="25"
+              offset-y="25"
           >
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon>mdi-bell-outline</v-icon>
@@ -392,7 +392,7 @@ export default {
         this.$v.$touch()
       }
       else {
-        this.axios.post(this.url+'user/changeuserpass', JSON.stringify(this.pass),
+        this.axios.post(this.url+'fixer/changepass', JSON.stringify(this.pass),
         ).then(res => {//true
           this.savemess = res.data["mess"];
           this.show=true;

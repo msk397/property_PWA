@@ -94,6 +94,11 @@
                     </v-col>
                     <v-spacer/>
                     <v-col cols="12" sm="6" md="4">
+                      <v-switch
+                          v-if="login==='root'"
+                          v-model="editedItem.status"
+                          label="是否为超级管理员"
+                      ></v-switch>
                       <v-btn
                           v-if="editedIndex !== -1"
                           depressed
@@ -257,6 +262,7 @@ import { required,maxLength,minLength,alphaNum,numeric} from 'vuelidate/lib/vali
 import { mdiSend } from '@mdi/js'
 export default {
   data: () => ({
+    login:window.localStorage.getItem('loginname'),
     url: process.env.VUE_APP_API,
     load:true,
     mdiSend:mdiSend,
@@ -281,8 +287,8 @@ export default {
     editedIndex: -1,
     log_log:null,
     title:null,
-    editedItem: {admin_addr:'', admin_loginname:'', admin_realname:'', admin_phone:''},
-    defaultItem: {admin_addr:'', admin_loginname:'', admin_realname:'', admin_phone:''},
+    editedItem: {admin_addr:'', admin_loginname:'', admin_realname:'', admin_phone:'', status:false,},
+    defaultItem: {admin_addr:'', admin_loginname:'', admin_realname:'', admin_phone:'', status:false,},
   }),
   mixins: [validationMixin],
   validations: {

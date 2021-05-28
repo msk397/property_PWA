@@ -44,6 +44,9 @@
                         prepend-inner-icon="mdi-account-outline"
                         hide-details
                         v-model="signin.account"
+                        :error-messages="signnameErrors"
+                        @input="$v.signin.account.$touch()"
+                        @blur="$v.signin.account.$touch()"
                     ></v-text-field>
 
                     <v-text-field
@@ -58,6 +61,9 @@
                         hide-details
                         class="mt-6"
                         v-model="signin.passwd"
+                        :error-messages="signpdErrors"
+                        @input="$v.signin.passwd.$touch()"
+                        @blur="$v.signin.passwd.$touch()"
                     ></v-text-field>
 
 
@@ -98,7 +104,30 @@
 </template>
 
 <script>
+import { required} from 'vuelidate/lib/validators'
+import {validationMixin} from "vuelidate";
 export default {
+  mixins: [validationMixin],
+  validations: {
+    signin:{
+      account:{required},
+      passwd:{required},
+    }
+  },
+  computed: {
+    signnameErrors () {
+      const errors = []
+      if (!this.$v.signin.account.$dirty) return errors
+      !this.$v.signin.account.required && errors.push('详情不可为空')
+      return errors
+    },
+    signpdErrors(){
+      const errors = []
+      if (!this.$v.signin.passwd.$dirty) return errors
+      !this.$v.signin.passwd.required && errors.push('详情不可为空')
+      return errors
+    }
+  },
   data () {
     return {
       url: process.env.VUE_APP_API,
@@ -139,56 +168,60 @@ export default {
       }
     },
     asd:function (){
-      this.axios.post(this.url+'common/signin', JSON.stringify(this.signin)
-      ).then(res => {//true
-        if(res.data["flag"]==="error"){
-          this.mess = res.data["mess"];
-          this.show = true;
-        }
-        else if(res.data["flag"]==="success"){
-          if(res.data["mess"]==="admin")
-          {
-            if(this.signin.account==='root'){
-              window.localStorage.setItem('identity','0');
+      if(this.$v.$invalid||this.$v.$error){
+        this.$v.$touch()
+      }
+      else {
+        this.axios.post(this.url + 'common/signin', JSON.stringify(this.signin)
+        ).then(res => {//true
+          if (res.data["flag"] === "error") {
+            this.mess = res.data["mess"];
+            this.show = true;
+          } else if (res.data["flag"] === "success") {
+            if (res.data["mess"] === "admin") {
+              if (res.data["root"] ===1) {
+                window.localStorage.setItem('identity', '0');
+              } else {
+                window.localStorage.setItem('identity', '1');
+              }
+              window.localStorage.setItem('loginname', this.signin.account);
+              window.localStorage.setItem('name', res.data["name"]);
+              window.localStorage.setItem('login', '1')
+              this.$router.push({
+                path: '/user/adminlist',
+                query: {
+                  name: res.data["name"],
+                }
+              });
+            } else if (res.data["mess"] === "cust") {
+              window.localStorage.setItem('identity', '2');
+              window.localStorage.setItem('loginname', this.signin.account);
+              window.localStorage.setItem('name', res.data["name"]);
+              window.localStorage.setItem('login', '1')
+              this.$router.push({
+                path: '/cust/dashboard',
+                query: {
+                  name: res.data["name"],
+                }
+              });
+            } else if (res.data["mess"] === "fixer") {
+              window.localStorage.setItem('identity', '3');
+              window.localStorage.setItem('loginname', this.signin.account);
+              window.localStorage.setItem('name', res.data["name"]);
+              window.localStorage.setItem('login', '1')
+              this.$router.push({
+                path: '/fixer/dashboard',
+                query: {
+                  name: res.data["name"],
+                }
+              });
             }
-            else{
-              window.localStorage.setItem('identity','1');
-            }
-            window.localStorage.setItem('loginname', this.signin.account);
-            window.localStorage.setItem('name', res.data["name"]);
-            window.localStorage.setItem('login','1')
-            this.$router.push({ path:'/user/adminlist',
-              query:{
-                name: res.data["name"],
-              }});
           }
-          else if(res.data["mess"]==="cust")
-          {
-            window.localStorage.setItem('identity','2');
-            window.localStorage.setItem('loginname', this.signin.account);
-            window.localStorage.setItem('name', res.data["name"]);
-            window.localStorage.setItem('login','1')
-            this.$router.push({ path:'/cust/dashboard',
-              query:{
-                name: res.data["name"],
-              }});
-          }
-          else if(res.data["mess"]==="fixer")
-          {
-            window.localStorage.setItem('identity','3');
-            window.localStorage.setItem('loginname', this.signin.account);
-            window.localStorage.setItem('name', res.data["name"]);
-            window.localStorage.setItem('login','1')
-            this.$router.push({ path:'/fixer/dashboard',
-              query:{
-                name: res.data["name"],
-              }});
-          }
-        }
-          }, res => {// 错误回调
-        /*TODO 这里写啥？*/
-        console.log(res);
-          })
+        }, res => {// 错误回调
+          /*TODO 这里写啥？*/
+          console.log(res);
+        })
+      }
     },
   },
 }

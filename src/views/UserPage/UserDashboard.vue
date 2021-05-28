@@ -445,6 +445,7 @@ export default {
         this.$v.$touch()
       }
       else {
+        if(this.viewquary===window.localStorage.getItem("name")){
         var mess = {"id": this.editedItem.poster_id}
         this.axios.post(this.url + 'user/postsign', JSON.stringify(mess))
             .then(res => {
@@ -455,6 +456,10 @@ export default {
             }, res => {
               console.log(res);
             })
+      }else{
+        this.mess = "识别到的文字不是老板姓名，请重新上传文件"
+        this.bar1 = true
+      }
       }
     },
   },

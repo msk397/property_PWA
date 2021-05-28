@@ -117,7 +117,7 @@
                         scrollable
                         :allowed-dates="allowedDates"
                     >
-                      <v-spacer></v-spacer>
+                      <v-spacer/>
                       <v-btn
                           text
                           color="primary"
@@ -142,9 +142,10 @@
                         v-model="editedItem.charge_memo"
                     ></v-select>
                   </v-col>
-                  <v-spacer></v-spacer>
+                  <v-spacer/>
                   <v-col cols="12" sm="6" md="4">
                     <v-switch
+                        v-if="editedIndex !== -1"
                         v-model="editedItem.status"
                         label="是否已缴费"
                     ></v-switch>

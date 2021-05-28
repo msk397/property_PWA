@@ -55,8 +55,8 @@
               color="error"
               :value="logfail"
               :content="logfail"
-              offset-x="15"
-              offset-y="15"
+              offset-x="25"
+              offset-y="25"
           >
             <v-btn icon v-bind="attrs" v-on="on" v-if="id==='1'">
               <v-icon>mdi-bell-outline</v-icon>
